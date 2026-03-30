@@ -1,0 +1,119 @@
+[ 
+   { 
+     "id": "1", 
+     "title": "Kickoff & Project Charter", 
+     "startDate": "2026-07-01", 
+     "endDate": "2026-07-10", 
+     "priority": "High", 
+     "color": "#1D4ED8", 
+     "status": "Completed" 
+   }, 
+   { 
+     "id": "2", 
+     "title": "Market Research & Analysis", 
+     "startDate": "2026-07-08", 
+     "endDate": "2026-07-22", 
+     "priority": "Medium", 
+     "color": "#3B82F6", 
+     "status": "Completed" 
+   }, 
+   { 
+     "id": "3", 
+     "title": "System Architecture Design", 
+     "startDate": "2026-07-20", 
+     "endDate": "2026-08-05", 
+     "priority": "High", 
+     "color": "#1D4ED8", 
+     "status": "In Progress" 
+   }, 
+   { 
+     "id": "4", 
+     "title": "UI/UX Prototyping", 
+     "startDate": "2026-07-25", 
+     "endDate": "2026-08-15", 
+     "priority": "Medium", 
+     "color": "#8B5CF6", 
+     "status": "In Progress" 
+   }, 
+   { 
+     "id": "5", 
+     "title": "Backend API Development", 
+     "startDate": "2026-08-01", 
+     "endDate": "2026-08-25", 
+     "priority": "High", 
+     "color": "#1D4ED8", 
+     "status": "Pending" 
+   }, 
+   { 
+     "id": "6", 
+     "title": "Frontend Integration", 
+     "startDate": "2026-08-10", 
+     "endDate": "2026-09-05", 
+     "priority": "Medium", 
+     "color": "#3B82F6", 
+     "status": "Pending" 
+   }, 
+   { 
+     "id": "7", 
+     "title": "Database Schema Optimization", 
+     "startDate": "2026-08-15", 
+     "endDate": "2026-08-30", 
+     "priority": "Low", 
+     "color": "#94A3B8", 
+     "status": "Pending" 
+   }, 
+   { 
+     "id": "8", 
+     "title": "Quality Assurance Testing", 
+     "startDate": "2026-08-25", 
+     "endDate": "2026-09-15", 
+     "priority": "High", 
+     "color": "#F43F5E", 
+     "status": "Pending" 
+   }, 
+   { 
+     "id": "9", 
+     "title": "User Acceptance Testing (UAT)", 
+     "startDate": "2026-09-05", 
+     "endDate": "2026-09-20", 
+     "priority": "Medium", 
+     "color": "#8B5CF6", 
+     "status": "Pending" 
+   }, 
+   { 
+     "id": "10", 
+     "title": "Security Audit & Compliance", 
+     "startDate": "2026-09-10", 
+     "endDate": "2026-09-22", 
+     "priority": "High", 
+     "color": "#1D4ED8", 
+     "status": "Pending" 
+   }, 
+   { 
+     "id": "11", 
+     "title": "Deployment Strategy", 
+     "startDate": "2026-09-18", 
+     "endDate": "2026-09-25", 
+     "priority": "Medium", 
+     "color": "#3B82F6", 
+     "status": "Pending" 
+   }, 
+   { 
+     "id": "12", 
+     "title": "Staff Training & Handover", 
+     "startDate": "2026-09-22", 
+     "endDate": "2026-09-30", 
+     "priority": "Low", 
+     "color": "#94A3B8", 
+     "status": "Pending" 
+   }, 
+   { 
+     "id": "13", 
+     "title": "Project Closure & Reporting", 
+     "startDate": "2026-09-28", 
+     "endDate": "2026-10-05", 
+     "priority": "Medium", 
+     "color": "#8B5CF6", 
+     "status": "Pending" 
+   } 
+ ]

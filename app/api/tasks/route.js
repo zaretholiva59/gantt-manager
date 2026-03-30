@@ -1,52 +1,47 @@
-import dbConnect from '@/lib/mongodb';
-import Task from '@/models/Task';
 import { NextResponse } from 'next/server';
+import fs from 'fs/promises';
+import path from 'path';
+
+const DATA_FILE = path.join(process.cwd(), 'data/tasks.json');
+
+async function getTasks() {
+  try {
+    const data = await fs.readFile(DATA_FILE, 'utf8');
+    return JSON.parse(data);
+  } catch (error) {
+    return [];
+  }
+}
+
+async function saveTasks(tasks) {
+  await fs.writeFile(DATA_FILE, JSON.stringify(tasks, null, 2), 'utf8');
+}
 
 export async function GET() {
-  const conn = await dbConnect();
-  if (!conn) {
-    return NextResponse.json({ success: false, error: 'Database connection failed. Please check if your IP is whitelisted in MongoDB Atlas and MONGODB_URI is correct.' }, { status: 503 });
-  }
   try {
-    const tasks = await Task.find({}).sort({ startDate: 1 }).lean();
+    const tasks = await getTasks();
     return NextResponse.json({ success: true, data: tasks });
   } catch (error) {
-    console.error('GET /api/tasks error:', error);
     return NextResponse.json({ success: false, error: error.message }, { status: 500 });
   }
 }
 
 export async function POST(request) {
-  const conn = await dbConnect();
-  if (!conn) {
-    return NextResponse.json({ success: false, error: 'Fallo de conexión a la base de datos' }, { status: 503 });
-  }
   try {
     const body = await request.json();
-    console.log('--- NUEVA TAREA RECIBIDA ---');
-    console.log('Body:', body);
+    const tasks = await getTasks();
     
-    // Validación manual de campos requeridos para loguear errores específicos
-    const requiredFields = ['title', 'startDate', 'endDate'];
-    const missingFields = requiredFields.filter(field => !body[field]);
+    const newTask = {
+      ...body,
+      id: body.id || Date.now().toString(), // Use provided id or generate one
+      status: body.status || 'Pending'
+    };
     
-    if (missingFields.length > 0) {
-      console.error('Campos faltantes:', missingFields);
-      return NextResponse.json({ 
-        success: false, 
-        error: `Faltan campos obligatorios: ${missingFields.join(', ')}` 
-      }, { status: 400 });
-    }
-
-    const task = await Task.create(body);
-    console.log('✅ Tarea creada con ID:', task._id);
-    return NextResponse.json({ success: true, data: task }, { status: 201 });
+    tasks.push(newTask);
+    await saveTasks(tasks);
+    
+    return NextResponse.json({ success: true, data: newTask }, { status: 201 });
   } catch (error) {
-    console.error('❌ Error detallado en POST /api/tasks:', error);
-    return NextResponse.json({ 
-      success: false, 
-      error: error.message,
-      stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
-    }, { status: 400 });
+    return NextResponse.json({ success: false, error: error.message }, { status: 400 });
   }
 }

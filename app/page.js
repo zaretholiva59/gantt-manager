@@ -66,7 +66,7 @@ export default function GanttView() {
 
   const handleOpenModal = (task = null) => {
     if (task) {
-      setIsEditing(task._id);
+      setIsEditing(task._id || task.id);
       setFormData({
         title: task.title,
         startDate: new Date(task.startDate).toISOString().split('T')[0],
@@ -235,13 +235,13 @@ export default function GanttView() {
               </div>
               <div className="divide-y divide-gray-50">
                 {tasks.map((task) => (
-                  <div key={task._id} className="h-12 flex items-center justify-between px-6 text-sm text-gray-600 font-medium hover:bg-borcelle-gray-light group transition-colors">
+                  <div key={task._id || task.id} className="h-12 flex items-center justify-between px-6 text-sm text-gray-600 font-medium hover:bg-borcelle-gray-light group transition-colors">
                     <span className="truncate flex-grow mr-2">{task.title}</span>
                     <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                       <button onClick={() => handleOpenModal(task)} className="p-1.5 text-blue-600 hover:bg-blue-50 rounded-sm" title="Editar">
                         <Edit2 size={14} />
                       </button>
-                      <button onClick={() => handleDelete(task._id)} className="p-1.5 text-red-600 hover:bg-red-50 rounded-sm" title="Eliminar">
+                      <button onClick={() => handleDelete(task._id || task.id)} className="p-1.5 text-red-600 hover:bg-red-50 rounded-sm" title="Eliminar">
                         <Trash2 size={14} />
                       </button>
                     </div>
@@ -282,7 +282,7 @@ export default function GanttView() {
                   const width = ((taskEnd - taskStart) / totalTime) * 100;
 
                   return (
-                    <div key={task._id} className="h-12 flex items-center relative group">
+                    <div key={task._id || task.id} className="h-12 flex items-center relative group">
                       <div
                         className="h-6 rounded-sm absolute transition-all hover:brightness-110 cursor-pointer shadow-sm z-10"
                         style={{

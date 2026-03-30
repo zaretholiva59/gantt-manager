@@ -1,44 +1,63 @@
-import dbConnect from '@/lib/mongodb';
-import Task from '@/models/Task';
 import { NextResponse } from 'next/server';
+import fs from 'fs/promises';
+import path from 'path';
+
+const DATA_FILE = path.join(process.cwd(), 'data/tasks.json');
+
+async function getTasks() {
+  try {
+    const data = await fs.readFile(DATA_FILE, 'utf8');
+    return JSON.parse(data);
+  } catch (error) {
+    return [];
+  }
+}
+
+async function saveTasks(tasks) {
+  await fs.writeFile(DATA_FILE, JSON.stringify(tasks, null, 2), 'utf8');
+}
 
 export async function DELETE(request, { params }) {
-  const conn = await dbConnect();
-  if (!conn) {
-    return NextResponse.json({ success: false, error: 'Database connection failed' }, { status: 500 });
-  }
   const { id } = await params;
   try {
-    console.log('Deleting task:', id);
-    const deletedTask = await Task.findByIdAndDelete(id);
-    if (!deletedTask) {
+    const tasks = await getTasks();
+    const updatedTasks = tasks.filter(t => (t._id || t.id).toString() !== id.toString());
+    
+    if (tasks.length === updatedTasks.length) {
       return NextResponse.json({ success: false, error: 'Task not found' }, { status: 404 });
     }
-    console.log('Task deleted successfully');
+    
+    await saveTasks(updatedTasks);
     return NextResponse.json({ success: true, data: {} });
   } catch (error) {
-    console.error('DELETE /api/tasks/[id] error:', error);
-    return NextResponse.json({ success: false, error: error.message }, { status: 400 });
+    return NextResponse.json({ success: false, error: error.message }, { status: 500 });
   }
 }
 
 export async function PATCH(request, { params }) {
-  const conn = await dbConnect();
-  if (!conn) {
-    return NextResponse.json({ success: false, error: 'Database connection failed' }, { status: 500 });
-  }
   const { id } = await params;
   try {
     const body = await request.json();
-    console.log('Updating task:', id, 'with body:', body);
-    const task = await Task.findByIdAndUpdate(id, body, { new: true, runValidators: true });
-    if (!task) {
+    const tasks = await getTasks();
+    
+    let taskFound = false;
+    const updatedTasks = tasks.map(t => {
+      if ((t._id || t.id).toString() === id.toString()) {
+        taskFound = true;
+        return { ...t, ...body };
+      }
+      return t;
+    });
+
+    if (!taskFound) {
       return NextResponse.json({ success: false, error: 'Task not found' }, { status: 404 });
     }
-    console.log('Task updated successfully');
-    return NextResponse.json({ success: true, data: task });
+
+    await saveTasks(updatedTasks);
+    const updatedTask = updatedTasks.find(t => (t._id || t.id).toString() === id.toString());
+    
+    return NextResponse.json({ success: true, data: updatedTask });
   } catch (error) {
-    console.error('PATCH /api/tasks/[id] error:', error);
-    return NextResponse.json({ success: false, error: error.message }, { status: 400 });
+    return NextResponse.json({ success: false, error: error.message }, { status: 500 });
   }
 }

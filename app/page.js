@@ -91,12 +91,12 @@ export default function GanttView() {
     const end = new Date(formData.endDate);
 
     if (isNaN(start.getTime()) || isNaN(end.getTime())) {
-      setError('Por favor, ingrese fechas válidas.');
+      setError('Error: Las fechas ingresadas no son válidas.');
       return;
     }
 
     if (end < start) {
-      setError('La fecha de finalización no puede ser anterior a la de inicio.');
+      setError('Error de Negocio: La fecha de finalización no puede ser anterior a la de inicio.');
       return;
     }
 
@@ -110,27 +110,37 @@ export default function GanttView() {
     const method = isEditing ? 'PATCH' : 'POST';
 
     try {
-      console.log('Enviando payload:', payload);
+      console.log('📡 Iniciando petición fetch a:', url);
       const res = await fetch(url, {
         method: method,
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
         body: JSON.stringify(payload),
       });
       
       const result = await res.json();
       
       if (res.ok && result.success) {
+        console.log('✅ Éxito en la operación:', method);
         await fetchTasks();
         setShowModal(false);
         setFormData(initialFormState);
       } else {
-        const errorMsg = result.error || result.message || 'Error desconocido al guardar';
-        console.error('Error de servidor:', errorMsg);
-        setError(errorMsg);
+        // Manejo de errores específicos del servidor
+        const statusMsg = res.status === 503 ? 'Servidor No Disponible (Error 503)' : 
+                          res.status === 500 ? 'Error Interno del Servidor (500)' :
+                          res.status === 400 ? 'Solicitud Incorrecta (400)' :
+                          `Error ${res.status}`;
+                          
+        const detailedError = result.error || result.message || 'Error desconocido';
+        console.error('❌ Error del servidor:', statusMsg, detailedError);
+        setError(`${statusMsg}: ${detailedError}`);
       }
     } catch (error) {
-      console.error('Error de red:', error);
-      setError('Error de conexión con el servidor corporativo.');
+      console.error('❌ Error de red/conexión:', error);
+      setError(`Error de Red: No se pudo conectar con el servidor. (${error.message})`);
     }
   };
 

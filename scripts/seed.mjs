@@ -10,11 +10,12 @@ dotenv.config({ path: path.join(__dirname, '../.env.local') });
 
 const MONGODB_URI = process.env.MONGODB_URI;
 
+// Definición de esquema para evitar dependencias circulares en el script
 const TaskSchema = new mongoose.Schema({
   title: String,
   startDate: Date,
   endDate: Date,
-  priority: String,
+  priority: { type: String, enum: ['High', 'Medium', 'Low'] },
   color: String,
   subtasks: [{ title: String, completed: Boolean }],
 });
@@ -22,49 +23,53 @@ const TaskSchema = new mongoose.Schema({
 const Task = mongoose.models.Task || mongoose.model('Task', TaskSchema);
 
 const tasks = [
-  // GRUPO ESTRATEGIA (AZUL PROFUNDO - #1E3A8A)
-  { title: 'Planificación Estratégica Q3', startDate: '2026-03-01', endDate: '2026-03-10', color: '#1E3A8A', priority: 'High', subtasks: [] },
-  { title: 'Análisis de Mercado Borcelle', startDate: '2026-03-05', endDate: '2026-03-15', color: '#1E3A8A', priority: 'Medium', subtasks: [] },
-  { title: 'Definición de KPIs Corporativos', startDate: '2026-03-08', endDate: '2026-03-20', color: '#1E3A8A', priority: 'High', subtasks: [] },
+  // JULIO 2026
+  { title: 'Análisis de Requerimientos Borcelle', startDate: '2026-07-01', endDate: '2026-07-10', color: '#67b7dc', priority: 'High', subtasks: [] },
+  { title: 'Diseño de Arquitectura de Datos', startDate: '2026-07-08', endDate: '2026-07-18', color: '#67b7dc', priority: 'Medium', subtasks: [] },
+  { title: 'Configuración de Infraestructura Cloud', startDate: '2026-07-15', endDate: '2026-07-25', color: '#67b7dc', priority: 'High', subtasks: [] },
+  { title: 'Desarrollo de Prototipo UI/UX', startDate: '2026-07-22', endDate: '2026-08-02', color: '#67b7dc', priority: 'Medium', subtasks: [] },
   
-  // GRUPO OPERACIONES (AZUL CIELO - #3B82F6)
-  { title: 'Optimización de Procesos Internos', startDate: '2026-03-12', endDate: '2026-03-25', color: '#3B82F6', priority: 'Medium', subtasks: [] },
-  { title: 'Auditoría de Sistemas TI', startDate: '2026-03-18', endDate: '2026-03-28', color: '#3B82F6', priority: 'High', subtasks: [] },
-  { title: 'Capacitación de Personal Senior', startDate: '2026-03-22', endDate: '2026-04-05', color: '#3B82F6', priority: 'Low', subtasks: [] },
+  // AGOSTO 2026
+  { title: 'Implementación de API Core', startDate: '2026-07-28', endDate: '2026-08-10', color: '#6794dc', priority: 'High', subtasks: [] },
+  { title: 'Integración de Pasarela de Pagos', startDate: '2026-08-05', endDate: '2026-08-15', color: '#6794dc', priority: 'High', subtasks: [] },
+  { title: 'Pruebas de Seguridad Perimetral', startDate: '2026-08-12', endDate: '2026-08-22', color: '#6794dc', priority: 'Medium', subtasks: [] },
   
-  // GRUPO INNOVACIÓN (PÚRPURA - #8B5CF6)
-  { title: 'Lanzamiento Nueva App Móvil', startDate: '2026-03-26', endDate: '2026-04-10', color: '#8B5CF6', priority: 'High', subtasks: [] },
-  { title: 'Investigación I+D Borcelle Lab', startDate: '2026-04-01', endDate: '2026-04-15', color: '#8B5CF6', priority: 'Medium', subtasks: [] },
-  { title: 'Implementación IA en Logística', startDate: '2026-04-05', endDate: '2026-04-20', color: '#8B5CF6', priority: 'High', subtasks: [] },
+  // SEPTIEMBRE 2026
+  { title: 'Optimización de Consultas DB', startDate: '2026-08-18', endDate: '2026-09-01', color: '#a367dc', priority: 'Medium', subtasks: [] },
+  { title: 'Despliegue en Ambiente de Staging', startDate: '2026-08-25', endDate: '2026-09-05', color: '#a367dc', priority: 'High', subtasks: [] },
+  { title: 'Control de Calidad (QA) Final', startDate: '2026-09-02', endDate: '2026-09-12', color: '#a367dc', priority: 'Medium', subtasks: [] },
   
-  // GRUPO CRÍTICO (ROJO - #EF4444)
-  { title: 'Cierre Fiscal Anual', startDate: '2026-04-12', endDate: '2026-04-25', color: '#EF4444', priority: 'High', subtasks: [] },
-  { title: 'Renovación Licencias Globales', startDate: '2026-04-18', endDate: '2026-04-30', color: '#EF4444', priority: 'High', subtasks: [] },
-  { title: 'Mantenimiento Servidores Core', startDate: '2026-04-22', endDate: '2026-05-05', color: '#EF4444', priority: 'Medium', subtasks: [] },
-  { title: 'Revisión de Seguridad Perimetral', startDate: '2026-04-28', endDate: '2026-05-15', color: '#EF4444', priority: 'High', subtasks: [] },
+  // GRUPO FINAL
+  { title: 'Capacitación a Usuarios Clave', startDate: '2026-09-08', endDate: '2026-09-18', color: '#dc6767', priority: 'Low', subtasks: [] },
+  { title: 'Lanzamiento Oficial Borcelle', startDate: '2026-09-15', endDate: '2026-09-25', color: '#dc6767', priority: 'High', subtasks: [] },
+  { title: 'Soporte Post-Lanzamiento Semanal', startDate: '2026-09-22', endDate: '2026-10-05', color: '#dc6767', priority: 'Medium', subtasks: [] },
 ];
 
 async function seed() {
   if (!MONGODB_URI) {
-    console.error('MONGODB_URI not found in .env.local');
+    console.error('❌ MONGODB_URI no encontrada en .env.local');
     process.exit(1);
   }
 
   try {
-    console.log('Connecting to MongoDB...');
+    console.log('🔄 Conectando a MongoDB...');
     await mongoose.connect(MONGODB_URI);
-    console.log('Connected successfully');
+    console.log('✅ Conexión establecida');
 
     await Task.deleteMany({});
-    console.log('Cleared existing tasks');
+    console.log('🗑️ Colección de tareas limpiada');
 
-    await Task.insertMany(tasks);
-    console.log('Inserted 13 professional tasks for Borcelle Company');
+    const result = await Task.insertMany(tasks);
+    console.log(`🚀 Éxito: Se han insertado ${result.length} tareas corporativas`);
+    
+    console.log('--- Resumen del Cronograma ---');
+    result.forEach(t => console.log(`- ${t.title}: ${t.startDate.toLocaleDateString()} a ${t.endDate.toLocaleDateString()}`));
 
     await mongoose.disconnect();
-    console.log('Seed completed successfully');
+    console.log('👋 Conexión cerrada. Script finalizado.');
+    process.exit(0);
   } catch (error) {
-    console.error('Error during seeding:', error);
+    console.error('❌ Error durante la inicialización:', error);
     process.exit(1);
   }
 }

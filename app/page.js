@@ -25,15 +25,17 @@ export default function GanttView() {
     try {
       const res = await fetch('/api/tasks');
       const data = await res.json();
-      if (data.success) {
+      if (res.ok && data.success) {
         setTasks(data.data);
         setError(null);
       } else {
-        setError(data.error || 'Error al cargar las tareas');
+        const errorMsg = data.error || `Error ${res.status}: Fallo al conectar con el servidor`;
+        console.error('API Error:', errorMsg);
+        setError(errorMsg);
       }
     } catch (error) {
-      console.error('Error fetching tasks:', error);
-      setError('Error de conexión con la base de datos. Verifique su MONGODB_URI.');
+      console.error('Network Error:', error);
+      setError('Error de red: No se pudo conectar con la API. Verifique su conexión a internet.');
     } finally {
       setLoading(false);
     }
@@ -84,14 +86,35 @@ export default function GanttView() {
     e.preventDefault();
     setError(null);
     
+    // Validación y formateo riguroso de fechas
+    const start = new Date(formData.startDate);
+    const end = new Date(formData.endDate);
+
+    if (isNaN(start.getTime()) || isNaN(end.getTime())) {
+      setError('Por favor, ingrese fechas válidas.');
+      return;
+    }
+
+    if (end < start) {
+      setError('La fecha de finalización no puede ser anterior a la de inicio.');
+      return;
+    }
+
+    const payload = {
+      ...formData,
+      startDate: start.toISOString(),
+      endDate: end.toISOString()
+    };
+
     const url = isEditing ? `/api/tasks/${isEditing}` : '/api/tasks';
     const method = isEditing ? 'PATCH' : 'POST';
 
     try {
+      console.log('Enviando payload:', payload);
       const res = await fetch(url, {
         method: method,
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(payload),
       });
       
       const result = await res.json();
@@ -101,11 +124,13 @@ export default function GanttView() {
         setShowModal(false);
         setFormData(initialFormState);
       } else {
-        setError(result.error || 'Error al guardar la tarea');
+        const errorMsg = result.error || result.message || 'Error desconocido al guardar';
+        console.error('Error de servidor:', errorMsg);
+        setError(errorMsg);
       }
     } catch (error) {
-      console.error('Error saving task:', error);
-      setError('Error de conexión con el servidor');
+      console.error('Error de red:', error);
+      setError('Error de conexión con el servidor corporativo.');
     }
   };
 

@@ -60,10 +60,10 @@ export default function GanttView() {
   );
 
   // Timeline logic
-  const startDates = tasks.map(t => new Date(t.startDate));
-  const endDates = tasks.map(t => new Date(t.endDate));
-  const minDate = new Date(Math.min(...startDates));
-  const maxDate = new Date(Math.max(...endDates));
+  const startDates = tasks.length > 0 ? tasks.map(t => new Date(t.startDate)) : [new Date()];
+  const endDates = tasks.length > 0 ? tasks.map(t => new Date(t.endDate)) : [new Date(Date.now() + 86400000 * 7)];
+  const minDate = new Date(Math.min(...startDates.map(d => d.getTime())));
+  const maxDate = new Date(Math.max(...endDates.map(d => d.getTime())));
   minDate.setDate(minDate.getDate() - 2);
   maxDate.setDate(maxDate.getDate() + 2);
 

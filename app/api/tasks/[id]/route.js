@@ -4,7 +4,7 @@ import { NextResponse } from 'next/server';
 
 export async function DELETE(request, { params }) {
   await dbConnect();
-  const { id } = params;
+  const { id } = await params;
   try {
     const deletedTask = await Task.findByIdAndDelete(id);
     if (!deletedTask) {
@@ -18,7 +18,7 @@ export async function DELETE(request, { params }) {
 
 export async function PATCH(request, { params }) {
   await dbConnect();
-  const { id } = params;
+  const { id } = await params;
   try {
     const body = await request.json();
     const task = await Task.findByIdAndUpdate(id, body, { new: true });

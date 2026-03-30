@@ -1,4 +1,4 @@
-import { Inter, Poppins, Handlee } from "next/font/google";
+import { Inter, Poppins } from "next/font/google";
 import "./globals.css";
 
 const inter = Inter({
@@ -7,26 +7,20 @@ const inter = Inter({
 });
 
 const poppins = Poppins({
-  weight: ['400', '600', '700'],
+  weight: ['400', '500', '600', '700'],
   subsets: ["latin"],
   variable: "--font-poppins",
 });
 
-const handlee = Handlee({
-  weight: '400',
-  subsets: ["latin"],
-  variable: "--font-handlee",
-});
-
 export const metadata = {
-  title: "Gantt Manager",
+  title: "Gantt Manager | Borcelle Company",
   description: "Professional project management with Gantt charts",
 };
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en" className={`${inter.variable} ${poppins.variable} ${handlee.variable}`}>
-      <body className="bg-cream-soft min-h-screen font-sans antialiased">
+    <html lang="en" className={`${inter.variable} ${poppins.variable}`}>
+      <body className="bg-white min-h-screen font-sans antialiased text-borcelle-dark">
         <main>{children}</main>
       </body>
     </html>

@@ -1,26 +1,55 @@
 @import "tailwindcss";
 
+@theme {
+  --font-sans: "Poppins", "Inter", system-ui, -apple-system, sans-serif;
+  --font-handlee: "Handlee", cursive;
+  
+  --color-cream-soft: #FEFDF5;
+  --color-pink-bubblegum: #FF8BA7;
+  --color-pink-pastel: #FFC2D1;
+  --color-task-blue: #67b7dc;
+  --color-task-dark-blue: #6794dc;
+  --color-task-purple: #a367dc;
+  --color-task-coral: #dc6767;
+}
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --background: #FEFDF5;
+  --foreground: #33272a;
 }
 
 body {
-  background: var(--background);
+  background-color: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans);
+}
+
+.font-handlee {
+  font-family: var(--font-handlee);
+}
+
+/* Decorative background elements */
+.bg-decor {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.decor-circle {
+  position: absolute;
+  border-radius: 50%;
+  background: var(--color-pink-pastel);
+  opacity: 0.15;
+  filter: blur(40px);
+}
+
+.decor-star {
+  position: absolute;
+  color: var(--color-pink-bubblegum);
+  opacity: 0.2;
 }

@@ -18,15 +18,18 @@ async function saveTasks(tasks) {
 }
 
 export async function GET() {
+  console.log(">>> [GET] EJECUTANDO API TASKS EN MODO JSON");
   try {
     const tasks = await getTasks();
     return NextResponse.json({ success: true, data: tasks });
-  } catch (error) {
-    return NextResponse.json({ success: false, error: error.message }, { status: 500 });
+  } catch (err) {
+    console.error(">>> ERROR CRÍTICO EN API (GET):", err.message);
+    return NextResponse.json({ error: err.message, stack: err.stack }, { status: 500 });
   }
 }
 
 export async function POST(request) {
+  console.log(">>> [POST] EJECUTANDO API TASKS EN MODO JSON");
   try {
     const body = await request.json();
     const tasks = await getTasks();
@@ -41,7 +44,8 @@ export async function POST(request) {
     await saveTasks(tasks);
     
     return NextResponse.json({ success: true, data: newTask }, { status: 201 });
-  } catch (error) {
-    return NextResponse.json({ success: false, error: error.message }, { status: 400 });
+  } catch (err) {
+    console.error(">>> ERROR CRÍTICO EN API (POST):", err.message);
+    return NextResponse.json({ error: err.message, stack: err.stack }, { status: 400 });
   }
 }

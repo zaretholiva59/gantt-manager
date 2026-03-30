@@ -18,6 +18,7 @@ async function saveTasks(tasks) {
 }
 
 export async function DELETE(request, { params }) {
+  console.log(">>> [DELETE] EJECUTANDO API TASKS EN MODO JSON");
   const { id } = await params;
   try {
     const tasks = await getTasks();
@@ -29,12 +30,14 @@ export async function DELETE(request, { params }) {
     
     await saveTasks(updatedTasks);
     return NextResponse.json({ success: true, data: {} });
-  } catch (error) {
-    return NextResponse.json({ success: false, error: error.message }, { status: 500 });
+  } catch (err) {
+    console.error(">>> ERROR CRÍTICO EN API (DELETE):", err.message);
+    return NextResponse.json({ error: err.message, stack: err.stack }, { status: 500 });
   }
 }
 
 export async function PATCH(request, { params }) {
+  console.log(">>> [PATCH] EJECUTANDO API TASKS EN MODO JSON");
   const { id } = await params;
   try {
     const body = await request.json();
@@ -57,7 +60,8 @@ export async function PATCH(request, { params }) {
     const updatedTask = updatedTasks.find(t => (t._id || t.id).toString() === id.toString());
     
     return NextResponse.json({ success: true, data: updatedTask });
-  } catch (error) {
-    return NextResponse.json({ success: false, error: error.message }, { status: 500 });
+  } catch (err) {
+    console.error(">>> ERROR CRÍTICO EN API (PATCH):", err.message);
+    return NextResponse.json({ error: err.message, stack: err.stack }, { status: 500 });
   }
 }

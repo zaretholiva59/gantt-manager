@@ -27,10 +27,32 @@ export default function GanttView() {
       const data = await res.json();
       if (data.success) {
         setTasks(data.data);
+        setError(null);
+      } else {
+        setError(data.error || 'Error al cargar las tareas');
       }
     } catch (error) {
       console.error('Error fetching tasks:', error);
-      setError('Error al cargar las tareas');
+      setError('Error de conexión con la base de datos. Verifique su MONGODB_URI.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSeed = async () => {
+    if (!confirm('¿Desea poblar la base de datos con el cronograma corporativo de ejemplo?')) return;
+    setLoading(true);
+    try {
+      const res = await fetch('/api/seed');
+      const data = await res.json();
+      if (data.success) {
+        alert('Base de datos poblada con éxito');
+        await fetchTasks();
+      } else {
+        alert('Error al poblar: ' + data.error);
+      }
+    } catch (err) {
+      alert('Error de conexión');
     } finally {
       setLoading(false);
     }
@@ -151,9 +173,20 @@ export default function GanttView() {
 
       <main className="p-8 max-w-[1600px] mx-auto">
         {tasks.length === 0 && !loading && (
-          <div className="mb-8 p-6 bg-blue-50 border border-blue-100 rounded-sm text-borcelle-blue-deep flex items-center gap-3">
-            <AlertCircle size={20} />
-            <p className="text-sm font-medium">No hay tareas registradas. Comience agregando una nueva tarea o ejecutando el script de población.</p>
+          <div className="mb-8 p-6 bg-blue-50 border border-blue-100 rounded-sm text-borcelle-blue-deep flex flex-col md:flex-row items-center justify-between gap-4 animate-in fade-in slide-in-from-top-4 duration-500">
+            <div className="flex items-center gap-3">
+              <AlertCircle size={24} className="text-borcelle-blue-sky" />
+              <div>
+                <p className="font-bold uppercase tracking-tight text-sm">Base de datos sin registros</p>
+                <p className="text-xs opacity-80">No hay tareas registradas en el sistema. Puede agregar una nueva o usar los datos de ejemplo.</p>
+              </div>
+            </div>
+            <button 
+              onClick={handleSeed}
+              className="px-6 py-2 bg-borcelle-blue-sky text-white text-xs font-bold uppercase tracking-widest rounded-sm hover:bg-blue-600 transition-all shadow-sm whitespace-nowrap"
+            >
+              Cargar Cronograma de Ejemplo
+            </button>
           </div>
         )}
 

@@ -22,48 +22,51 @@ const TaskSchema = new mongoose.Schema({
 const Task = mongoose.models.Task || mongoose.model('Task', TaskSchema);
 
 const tasks = [
-  // BLUE GROUP (#67b7dc)
-  { title: 'Task One', startDate: '2016-07-25', endDate: '2016-07-30', color: '#67b7dc', priority: 'High', subtasks: [{ title: 'Subtask 1', completed: false }] },
-  { title: 'Task Two', startDate: '2016-07-26', endDate: '2016-08-01', color: '#67b7dc', priority: 'Medium', subtasks: [] },
-  { title: 'Task Three', startDate: '2016-07-26', endDate: '2016-08-04', color: '#67b7dc', priority: 'Low', subtasks: [] },
-  { title: 'Task Four', startDate: '2016-07-26', endDate: '2016-08-07', color: '#67b7dc', priority: 'Medium', subtasks: [] },
+  // GRUPO ESTRATEGIA (AZUL PROFUNDO - #1E3A8A)
+  { title: 'Planificación Estratégica Q3', startDate: '2026-03-01', endDate: '2026-03-10', color: '#1E3A8A', priority: 'High', subtasks: [] },
+  { title: 'Análisis de Mercado Borcelle', startDate: '2026-03-05', endDate: '2026-03-15', color: '#1E3A8A', priority: 'Medium', subtasks: [] },
+  { title: 'Definición de KPIs Corporativos', startDate: '2026-03-08', endDate: '2026-03-20', color: '#1E3A8A', priority: 'High', subtasks: [] },
   
-  // DARKER BLUE GROUP (#6794dc)
-  { title: 'Task Five', startDate: '2016-07-31', endDate: '2016-08-11', color: '#6794dc', priority: 'High', subtasks: [] },
-  { title: 'Task Six', startDate: '2016-07-31', endDate: '2016-08-06', color: '#6794dc', priority: 'Medium', subtasks: [] },
-  { title: 'Task Seven', startDate: '2016-08-03', endDate: '2016-08-16', color: '#6794dc', priority: 'Low', subtasks: [] },
+  // GRUPO OPERACIONES (AZUL CIELO - #3B82F6)
+  { title: 'Optimización de Procesos Internos', startDate: '2026-03-12', endDate: '2026-03-25', color: '#3B82F6', priority: 'Medium', subtasks: [] },
+  { title: 'Auditoría de Sistemas TI', startDate: '2026-03-18', endDate: '2026-03-28', color: '#3B82F6', priority: 'High', subtasks: [] },
+  { title: 'Capacitación de Personal Senior', startDate: '2026-03-22', endDate: '2026-04-05', color: '#3B82F6', priority: 'Low', subtasks: [] },
   
-  // PURPLE GROUP (#a367dc)
-  { title: 'Task Eight', startDate: '2016-08-07', endDate: '2016-08-19', color: '#a367dc', priority: 'High', subtasks: [] },
-  { title: 'Task Nine', startDate: '2016-08-07', endDate: '2016-08-12', color: '#a367dc', priority: 'Medium', subtasks: [] },
-  { title: 'Task Ten', startDate: '2016-08-10', endDate: '2016-08-18', color: '#a367dc', priority: 'Low', subtasks: [] },
+  // GRUPO INNOVACIÓN (PÚRPURA - #8B5CF6)
+  { title: 'Lanzamiento Nueva App Móvil', startDate: '2026-03-26', endDate: '2026-04-10', color: '#8B5CF6', priority: 'High', subtasks: [] },
+  { title: 'Investigación I+D Borcelle Lab', startDate: '2026-04-01', endDate: '2026-04-15', color: '#8B5CF6', priority: 'Medium', subtasks: [] },
+  { title: 'Implementación IA en Logística', startDate: '2026-04-05', endDate: '2026-04-20', color: '#8B5CF6', priority: 'High', subtasks: [] },
   
-  // RED/CORAL GROUP (#dc6767)
-  { title: 'Task Eleven', startDate: '2016-08-08', endDate: '2016-08-20', color: '#dc6767', priority: 'High', subtasks: [] },
-  { title: 'Task Twelve', startDate: '2016-08-12', endDate: '2016-08-24', color: '#dc6767', priority: 'Medium', subtasks: [] },
-  { title: 'Task Thirteen', startDate: '2016-08-17', endDate: '2016-08-29', color: '#dc6767', priority: 'Low', subtasks: [] },
+  // GRUPO CRÍTICO (ROJO - #EF4444)
+  { title: 'Cierre Fiscal Anual', startDate: '2026-04-12', endDate: '2026-04-25', color: '#EF4444', priority: 'High', subtasks: [] },
+  { title: 'Renovación Licencias Globales', startDate: '2026-04-18', endDate: '2026-04-30', color: '#EF4444', priority: 'High', subtasks: [] },
+  { title: 'Mantenimiento Servidores Core', startDate: '2026-04-22', endDate: '2026-05-05', color: '#EF4444', priority: 'Medium', subtasks: [] },
+  { title: 'Revisión de Seguridad Perimetral', startDate: '2026-04-28', endDate: '2026-05-15', color: '#EF4444', priority: 'High', subtasks: [] },
 ];
 
 async function seed() {
   if (!MONGODB_URI) {
-    console.error('MONGODB_URI not found');
+    console.error('MONGODB_URI not found in .env.local');
     process.exit(1);
   }
 
-  await mongoose.connect(MONGODB_URI);
-  console.log('Connected to MongoDB');
+  try {
+    console.log('Connecting to MongoDB...');
+    await mongoose.connect(MONGODB_URI);
+    console.log('Connected successfully');
 
-  await Task.deleteMany({});
-  console.log('Cleared existing tasks');
+    await Task.deleteMany({});
+    console.log('Cleared existing tasks');
 
-  await Task.insertMany(tasks);
-  console.log('Inserted 13 tasks');
+    await Task.insertMany(tasks);
+    console.log('Inserted 13 professional tasks for Borcelle Company');
 
-  await mongoose.disconnect();
-  console.log('Disconnected from MongoDB');
+    await mongoose.disconnect();
+    console.log('Seed completed successfully');
+  } catch (error) {
+    console.error('Error during seeding:', error);
+    process.exit(1);
+  }
 }
 
-seed().catch(err => {
-  console.error(err);
-  process.exit(1);
-});
+seed();
